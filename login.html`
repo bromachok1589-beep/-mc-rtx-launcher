@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход | MC-RTX Launcher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background: #0a0a0a;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .rtx-glow {
+            box-shadow: 0 0 30px rgba(0, 255, 150, 0.3);
+            border: 4px solid #3f3f46;
+        }
+        .mc-input {
+            background: #2e2e2e;
+            border: 4px solid #1a1a1a;
+            color: white;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .mc-input:focus {
+            border-color: #22c55e;
+        }
+        .mc-button {
+            background: #5a5a5a;
+            border-bottom: 4px solid #2e2e2e;
+            border-right: 4px solid #2e2e2e;
+            transition: all 0.1s;
+        }
+        .mc-button:active {
+            border-bottom: 0px;
+            border-right: 0px;
+            transform: translate(2px, 2px);
+        }
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container">
+        <canvas id="particleCanvas"></canvas>
+    </div>
+
+    <div class="relative z-10 w-full max-w-md p-8 bg-zinc-900 rtx-glow rounded-lg mx-4">
+        <h2 id="form-title" class="text-2xl text-center mb-8 text-green-500">ВХОД</h2>
+        
+        <form id="auth-form" class="space-y-6">
+            <div>
+                <label class="block text-[10px] mb-2">ПОЧТА / ЛОГИН</label>
+                <input type="text" id="email" required class="mc-input w-full p-3 text-xs" placeholder="example@mail.ru">
+            </div>
+            <div>
+                <label class="block text-[10px] mb-2">ПАРОЛЬ</label>
+                <input type="password" id="password" required class="mc-input w-full p-3 text-xs" placeholder="********">
+            </div>
+            <button type="submit" class="mc-button w-full py-4 text-sm text-white rounded hover:bg-green-600 transition">
+                ПОДТВЕРДИТЬ
+            </button>
+        </form>
+
+        <div class="mt-6 text-center">
+            <p class="text-[10px] text-gray-400">
+                <span id="toggle-text">Нет аккаунта?</span> 
+                <a href="#" id="toggle-auth" class="text-green-400 underline ml-2">Регистрация</a>
+            </p>
+            <a href="index.html" class="block mt-4 text-[10px] text-gray-500 hover:text-white">← На главную</a>
+        </div>
+    </div>
+
+    <script>
+        // Переключение между Входом и Регистрацией
+        const formTitle = document.getElementById('form-title');
+        const toggleAuth = document.getElementById('toggle-auth');
+        const toggleText = document.getElementById('toggle-text');
+        let isLogin = true;
+
+        toggleAuth.addEventListener('click', (e) => {
+            e.preventDefault();
+            isLogin = !isLogin;
+            formTitle.innerText = isLogin ? 'ВХОД' : 'РЕГИСТРАЦИЯ';
+            toggleText.innerText = isLogin ? 'Нет аккаунта?' : 'Уже есть аккаунт?';
+            toggleAuth.innerText = isLogin ? 'Регистрация' : 'Вход';
+        });
+
+        // Эффект частиц (дублируем для консистентности)
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            for(let i = 0; i < 80; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 3 + 1,
+                    speedX: Math.random() * 1 - 0.5,
+                    speedY: Math.random() * 1 - 0.5,
+                    color: `rgba(0, ${Math.random() * 255 + 100}, ${Math.random() * 155 + 100}, ${Math.random()})`
+                });
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.speedX; p.y += p.speedY;
+                if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', init);
+        init();
+        animate();
+    </script>
+</body>
+</html>
