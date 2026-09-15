@@ -1,0 +1,12 @@
+{
+  "name": "mc-rtx-launcher",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^25.0.0",
+    "minecraft-launcher-core": "^3.0.0"
+  }
+}

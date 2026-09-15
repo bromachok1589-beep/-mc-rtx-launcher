@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>MC-RTX Launcher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background: #0a0a0a;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden;
+            height: 100vh;
+            user-select: none;
+        }
+        .rtx-glow {
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            background: rgba(20, 20, 25, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        .mc-button {
+            background: #4a4a4a;
+            border-bottom: 4px solid #2e2e2e;
+            border-right: 4px solid #2e2e2e;
+            transition: all 0.1s;
+            text-shadow: 2px 2px #000;
+        }
+        .mc-button:active {
+            border-bottom: 0; border-right: 0;
+            transform: translate(2px, 2px);
+        }
+        .sidebar-item {
+            transition: all 0.2s;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background: rgba(34, 197, 94, 0.2);
+            border-left: 4px solid #22c55e;
+            color: #4ade80;
+        }
+        .version-select {
+            background: #1a1a1a;
+            border: 2px solid #3f3f46;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            outline: none;
+        }
+    </style>
+</head>
+<body class="flex">
+    <!-- Боковое меню -->
+    <aside class="w-64 h-full bg-zinc-900 flex flex-col border-r border-zinc-800">
+        <div class="p-6 text-green-500 text-xl font-bold border-b border-zinc-800">MC-RTX</div>
+        
+        <nav class="flex-1 p-4 space-y-2 text-[10px]">
+            <div class="sidebar-item active p-3 rounded" onclick="showPage('main')">ГЛАВНАЯ</div>
+            <div class="sidebar-item p-3 rounded" onclick="showPage('settings')">НАСТРОЙКИ</div>
+            <div class="sidebar-item p-3 rounded" onclick="showPage('pvp')">PvP ПРЕИМУЩЕСТВА</div>
+            <div class="sidebar-item p-3 rounded" onclick="showPage('about')">О ЛАУНЧЕРЕ</div>
+        </nav>
+
+        <div class="p-4 border-t border-zinc-800 text-[8px] text-gray-500 text-center">
+            v1.0.0 Beta
+        </div>
+    </aside>
+
+    <!-- Основной контент -->
+    <main class="flex-1 relative flex flex-col">
+        <!-- Фон -->
+        <div class="absolute inset-0 z-0 opacity-40">
+            <img src="https://images.unsplash.com/photo-1627398242454-45a14657289c?q=80&w=1920" class="w-full h-full object-cover">
+        </div>
+
+        <div class="relative z-10 p-8 flex-1 flex flex-col">
+            <!-- Страница: ГЛАВНАЯ -->
+            <div id="page-main" class="page space-y-8">
+                <h1 class="text-3xl text-green-500">ДОБРО ПОЖАЛОВАТЬ</h1>
+                <div class="rtx-glow p-6 rounded-xl max-w-2xl">
+                    <p class="text-xs leading-loose text-gray-300 mb-6">
+                        Готовы к игре? Выберите версию и нажмите кнопку запуска. Все RTX настройки применятся автоматически.
+                    </p>
+                    <div class="flex gap-4 items-center">
+                        <select id="version" class="version-select p-3 text-xs rounded">
+                            <option value="1.21.1">Версия 1.21.1</option>
+                            <option value="1.16.5">Версия 1.16.5</option>
+                            <option value="1.12.2">Версия 1.12.2</option>
+                        </select>
+                        <button id="launch-btn" class="mc-button px-6 py-3 text-sm text-white rounded">ЗАПУСК</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Страница: НАСТРОЙКИ -->
+            <div id="page-settings" class="page hidden space-y-8">
+                <h1 class="text-3xl text-green-500">ГИБКИЕ НАСТРОЙКИ</h1>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="rtx-glow p-6 rounded-lg">
+                        <label class="block text-[10px] mb-4">КАЧЕСТВО RTX</label>
+                        <select class="version-select w-full p-2 text-[10px]">
+                            <option>Ультра (4K)</option>
+                            <option>Высокое</option>
+                            <option>Среднее (Оптимально)</option>
+                        </select>
+                    </div>
+                    <div class="rtx-glow p-6 rounded-lg">
+                        <label class="block text-[10px] mb-4">ОПТИМИЗАЦИЯ FPS</label>
+                        <input type="checkbox" class="w-4 h-4"> <span class="text-[10px]">ВКЛЮЧИТЬ ТУРБО-РЕЖИМ</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Страница: PvP -->
+            <div id="page-pvp" class="page hidden space-y-8">
+                <h1 class="text-3xl text-green-500">PvP ПРЕИМУЩЕСТВА</h1>
+                <div class="rtx-glow p-6 rounded-lg max-w-2xl">
+                    <p class="text-xs leading-loose text-gray-300 mb-4">
+                        Получите преимущество в бою с помощью специальных настроек:
+                    </p>
+                    <ul class="text-[10px] space-y-3 text-gray-400">
+                        <li>- Оптимизация кликов (CPS Boost)</li>
+                        <li>- Повышенная видимость в темноте</li>
+                        <li>- Улучшенный расчет дистанции удара (Reach)</li>
+                        <li>- Полная совместимость с анти-читами</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Страница: О ЛАУНЧЕРЕ -->
+            <div id="page-about" class="page hidden space-y-8">
+                <h1 class="text-3xl text-green-500">ИНФОРМАЦИЯ</h1>
+                <div class="rtx-glow p-6 rounded-lg max-w-2xl space-y-4 text-[10px] text-gray-300">
+                    <p><strong>Дизайн:</strong> Элегантный минималистичный интерфейс для максимального погружения.</p>
+                    <p><strong>Производительность:</strong> Оптимизированный код для высокого FPS.</p>
+                    <p><strong>Обновления:</strong> Мы постоянно добавляем новые функции и фиксим баги.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Нижняя панель состояния -->
+        <footer class="relative z-10 p-4 bg-zinc-900 border-t border-zinc-800 flex justify-between items-center text-[10px]">
+            <div id="status" class="text-gray-500">Готов к запуску...</div>
+            <div class="text-green-600">СЕТЬ: ПОДКЛЮЧЕНО</div>
+        </footer>
+    </main>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+            
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+                if(item.innerText.toLowerCase().includes(pageId === 'main' ? 'главная' : pageId === 'settings' ? 'настройки' : pageId === 'pvp' ? 'pvp' : 'лаунчере')) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        document.getElementById('launch-btn').addEventListener('click', () => {
+            const version = document.getElementById('version').value;
+            const status = document.getElementById('status');
+            status.innerText = `Загрузка версии ${version}...`;
+            status.classList.add('text-green-500');
+            
+            setTimeout(() => {
+                status.innerText = `Запуск Minecraft ${version}...`;
+                setTimeout(() => {
+                    status.innerText = 'Игра запущена!';
+                }, 2000);
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

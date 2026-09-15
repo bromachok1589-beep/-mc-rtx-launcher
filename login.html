@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход | MC-RTX Launcher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0; background: #0a0a0a; color: white;
+            font-family: 'Press Start 2P', cursive;
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .rtx-glow {
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
+            border: 2px solid rgba(34, 197, 94, 0.6);
+            backdrop-filter: blur(12px);
+            background: rgba(20, 20, 25, 0.8);
+        }
+        .mc-input {
+            background: #1a1a1a; border: 2px solid #3f3f46;
+            color: white; outline: none; transition: border-color 0.2s;
+        }
+        .mc-input:focus { border-color: #22c55e; }
+        .mc-button {
+            background: #4a4a4a; border-bottom: 4px solid #2e2e2e;
+            border-right: 4px solid #2e2e2e; transition: all 0.1s;
+            text-shadow: 2px 2px #000;
+        }
+        .mc-button:active { border-bottom: 0; border-right: 0; transform: translate(2px, 2px); }
+        .bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+            url('https://images.unsplash.com/photo-1627398242454-45a14657289c?q=80&w=1920');
+            background-size: cover; background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+    <div class="relative z-10 w-full max-w-md p-10 rtx-glow rounded-2xl mx-4 text-center">
+        <h1 class="text-2xl text-green-500 mb-2">MC-RTX</h1>
+        <p class="text-[10px] text-gray-400 mb-10">ДОБРО ПОЖАЛОВАТЬ В БУДУЩЕЕ</p>
+        
+        <div class="space-y-6">
+            <div class="text-left">
+                <label class="block text-[8px] mb-2 text-gray-500">ЛОГИН / ПОЧТА</label>
+                <input type="text" class="mc-input w-full p-3 text-[10px] rounded" placeholder="Введите данные...">
+            </div>
+            <div class="text-left">
+                <label class="block text-[8px] mb-2 text-gray-500">ПАРОЛЬ</label>
+                <input type="password" class="mc-input w-full p-3 text-[10px] rounded" placeholder="********">
+            </div>
+            <button onclick="login()" class="mc-button w-full py-4 text-sm text-white rounded hover:bg-green-600 transition-all">
+                ВОЙТИ В СИСТЕМУ
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            // Имитация проверки данных и переход к главному меню
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
