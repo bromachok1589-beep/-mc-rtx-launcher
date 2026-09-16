@@ -1,0 +1,13 @@
+JVM info: Oracle Corporation - 1.8.0_503 - 25.503-b01
+java.net.preferIPv4Stack=true
+Current Time: 16/09/2026 18:51:41
+Host: files.minecraftforge.net [172.67.161.211, 104.21.58.163]
+Host: maven.minecraftforge.net [172.67.161.211, 104.21.58.163]
+Host: libraries.minecraft.net [13.107.226.53, 13.107.253.53]
+Host: launchermeta.mojang.com [150.171.109.197]
+Host: piston-meta.mojang.com [150.171.109.197]
+Host: sessionserver.mojang.com [150.171.109.198]
+Host: authserver.mojang.com [Unknown]
+Target Directory: .
+There is no minecraft launcher profile in ".", you need to run the launcher first!
+There was an error during installation

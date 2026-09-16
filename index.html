@@ -2,254 +2,314 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft RTX Launcher</title>
+    <title>MC-RTX Launcher</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
+    #log-window, .log-container, .log-message {
+        user-select: text !important; 
+        -webkit-user-select: text !important; 
+        -moz-user-select: text !important; 
+        -ms-user-select: text !important;
+    }
+
         body {
             margin: 0;
             background: #0a0a0a;
             color: white;
             font-family: 'Press Start 2P', cursive;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
+            overflow: hidden;
+            height: 100vh;
+            user-select: none;
         }
-        .mc-font { font-family: 'Press Start 2P', cursive; }
-        
-        .bg-rtx {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), 
-                        url('https://images.unsplash.com/photo-1627398242454-45a14657289c?q=80&w=1920&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            filter: brightness(0.5) contrast(1.2);
-            transform: scale(1.1);
-            animation: slowPan 30s infinite alternate ease-in-out;
-        }
-
-        @keyframes slowPan {
-            from { transform: scale(1.1) translateX(-2%); }
-            to { transform: scale(1.1) translateX(2%); }
-        }
-
         .rtx-glow {
-            box-shadow: 0 0 30px rgba(34, 197, 94, 0.4), inset 0 0 15px rgba(34, 197, 94, 0.2);
-            border: 2px solid rgba(34, 197, 94, 0.6);
-            backdrop-filter: blur(12px);
-            background: rgba(20, 20, 25, 0.7);
-            transition: all 0.3s ease;
-        }
-        .rtx-glow:hover {
-            box-shadow: 0 0 50px rgba(34, 197, 94, 0.6), inset 0 0 20px rgba(34, 197, 94, 0.3);
-            border-color: #4ade80;
-            transform: translateY(-10px) scale(1.02);
-        }
-
-        .hero-gradient {
-            background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(10,10,10,1) 100%);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            background: rgba(20, 20, 25, 0.8);
+            backdrop-filter: blur(10px);
         }
         .mc-button {
             background: #4a4a4a;
-            border-bottom: 6px solid #2e2e2e;
-            border-right: 6px solid #2e2e2e;
+            border-bottom: 4px solid #2e2e2e;
+            border-right: 4px solid #2e2e2e;
             transition: all 0.1s;
             text-shadow: 2px 2px #000;
-            position: relative;
-            overflow: hidden;
-        }
-        .mc-button::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
-        }
-        .mc-button:hover::after {
-            left: 100%;
         }
         .mc-button:active {
-            border-bottom: 0px;
-            border-right: 0px;
-            transform: translate(4px, 4px);
+            border-bottom: 0; border-right: 0;
+            transform: translate(2px, 2px);
         }
-        #canvas-container {
+        .sidebar-item {
+            transition: all 0.2s;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background: rgba(34, 197, 94, 0.2);
+            border-left: 4px solid #22c55e;
+            color: #4ade80;
+        }
+        .version-select {
+            background: #1a1a1a;
+            border: 2px solid #3f3f46;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            outline: none;
+        }
+        /* Pulse Visuals Menu */
+        #pulse-menu {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background: rgba(15, 15, 20, 0.95);
+            border: 2px solid #22c55e;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+            border-radius: 10px;
+            z-index: 1000;
+            display: none;
+            padding: 20px;
+            font-family: 'Press Start 2P', cursive;
         }
-        .floating {
-            animation: float 6s ease-in-out infinite;
+        .pulse-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 10px;
+            color: #ccc;
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        .pulse-toggle {
+            width: 40px;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.3s;
         }
-        .faq-item {
-            border-bottom: 1px solid rgba(34, 197, 94, 0.2);
-            padding: 20px 0;
+        .pulse-toggle.active {
+            background: #22c55e;
+        }
+        .pulse-toggle::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: 0.3s;
+        }
+        .pulse-toggle.active::after {
+            left: 22px;
         }
     </style>
 </head>
-<body>
-    <div class="bg-rtx"></div>
-    <div id="canvas-container">
-        <canvas id="particleCanvas"></canvas>
+<body class="flex">
+    <!-- Боковое меню -->
+    <aside class="w-64 h-full bg-zinc-900 flex flex-col border-r border-zinc-800">
+        <div class="p-6 text-green-500 text-xl font-bold border-b border-zinc-800">MC-RTX</div>
+        
+        <nav class="flex-1 p-4 space-y-2 text-[10px]">
+            <div class="sidebar-item active p-3 rounded" onclick="showPage('main')">ГЛАВНАЯ</div>
+            <div class="sidebar-item p-3 rounded" onclick="showPage('settings')">НАСТРОЙКИ</div>
+            <div class="sidebar-item p-3 rounded" onclick="showPage('pvp')">PvP ПРЕИМУЩЕСТВА</div>
+            <div class="sidebar-item p-3 rounded" onclick="showPage('about')">О ЛАУНЧЕРЕ</div>
+        </nav>
+
+        <div class="p-4 border-t border-zinc-800 text-[8px] text-gray-500 text-center">
+            v1.0.0 Beta
+        </div>
+    </aside>
+
+    <!-- Основной контент -->
+    <main class="flex-1 relative flex flex-col">
+        <!-- Фон -->
+        <div class="absolute inset-0 z-0 opacity-40">
+            <img src="https://images.unsplash.com/photo-1627398242454-45a14657289c?q=80&w=1920" class="w-full h-full object-cover">
+        </div>
+
+        <div class="relative z-10 p-8 flex-1 flex flex-col">
+            <!-- Страница: ГЛАВНАЯ -->
+            <div id="page-main" class="page space-y-8">
+                <h1 class="text-3xl text-green-500">ДОБРО ПОЖАЛОВАТЬ</h1>
+                <div class="rtx-glow p-6 rounded-xl max-w-2xl">
+                    <p class="text-xs leading-loose text-gray-300 mb-6">
+                        Готовы к игре? Выберите версию и нажмите кнопку запуска. Все RTX настройки применятся автоматически.
+                    </p>
+            <div class="flex flex-col gap-4">
+                <div class="flex gap-4 items-center">
+                    <select id="version" class="version-select p-3 text-xs rounded flex-1">
+                        <option value="1.21.1">Версия 1.21.1</option>
+                        <option value="1.16.5">Версия 1.16.5</option>
+                        <option value="1.12.2">Версия 1.12.2</option>
+                    </select>
+                    <select id="profile" class="version-select p-3 text-xs rounded flex-1">
+                        <option value="rtx">RTX Визуалы</option>
+                        <option value="pvp">PvP Преимущества</option>
+                    </select>
+                    <button id="launch-btn" class="mc-button px-6 py-3 text-sm text-white rounded">ЗАПУСК</button>
+                </div >
+                <div id="progress-container" class="hidden mt-6 space-y-2">
+                    <div class="flex justify-between text-[8px] text-gray-400 mb-1">
+                        <span id="progress-text">Загрузка...</span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
+                        <div id="progress-bar" class="bg-green-500 h-full w-0 transition-all duration-300 shadow-[0_0_10px_#22c55e]"></div>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+
+                </div>
+            </div>
+
+            <!-- Страница: НАСТРОЙКИ -->
+            <div id="page-settings" class="page hidden space-y-8">
+                <h1 class="text-3xl text-green-500">ГИБКИЕ НАСТРОЙКИ</h1>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="rtx-glow p-6 rounded-lg">
+                        <label class="block text-[10px] mb-4">КАЧЕСТВО RTX</label>
+                        <select class="version-select w-full p-2 text-[10px]">
+                            <option>Ультра (4K)</option>
+                            <option>Высокое</option>
+                            <option>Среднее (Оптимально)</option>
+                        </select>
+                    </div>
+                    <div class="rtx-glow p-6 rounded-lg">
+                        <label class="block text-[10px] mb-4">ОПТИМИЗАЦИЯ FPS</label>
+                        <input type="checkbox" class="w-4 h-4"> <span class="text-[10px]">ВКЛЮЧИТЬ ТУРБО-РЕЖИМ</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Страница: PvP -->
+            <div id="page-pvp" class="page hidden space-y-8">
+                <h1 class="text-3xl text-green-500">PvP ПРЕИМУЩЕСТВА</h1>
+                <div class="rtx-glow p-6 rounded-lg max-w-2xl">
+                    <p class="text-xs leading-loose text-gray-300 mb-4">
+                        Получите преимущество в бою с помощью специальных настроек:
+                    </p>
+                    <ul class="text-[10px] space-y-3 text-gray-400">
+                        <li>- Оптимизация кликов (CPS Boost)</li>
+                        <li>- Повышенная видимость в темноте</li>
+                        <li>- Улучшенный расчет дистанции удара (Reach)</li>
+                        <li>- Полная совместимость с анти-читами</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Страница: О ЛАУНЧЕРЕ -->
+            <div id="page-about" class="page hidden space-y-8">
+                <h1 class="text-3xl text-green-500">ИНФОРМАЦИЯ</h1>
+                <div class="rtx-glow p-6 rounded-lg max-w-2xl space-y-4 text-[10px] text-gray-300">
+                    <p><strong>Дизайн:</strong> Элегантный минималистичный интерфейс для максимального погружения.</p>
+                    <p><strong>Производительность:</strong> Оптимизированный код для высокого FPS.</p>
+                    <p><strong>Обновления:</strong> Мы постоянно добавляем новые функции и фиксим баги.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Консоль -->
+        <div id="console" class="relative z-10 p-4 bg-black text-green-400 text-[8px] font-mono h-48 overflow-y-auto border-t border-zinc-800 mb-4 shadow-inner">
+            <div class="text-gray-500 mb-2">[System] Console initialized. Ready for logs...</div>
+        </div>
+
+        <!-- Нижняя панель состояния -->
+
+        <footer class="relative z-10 p-4 bg-zinc-900 border-t border-zinc-800 flex justify-between items-center text-[10px]">
+            <div id="status" class="text-gray-500">Готов к запуску...</div>
+            <div class="text-green-600">СЕТЬ: ПОДКЛЮЧЕНО</div>
+        </footer>
+    </main>
+
+    <!-- Pulse Visuals Menu -->
+    <div id="pulse-menu">
+        <h2 class="text-green-500 text-center text-sm mb-6">PULSE VISUALS</h2>
+        <div class="pulse-item">
+            <span>AutoFood</span>
+            <div class="pulse-toggle" onclick="this.classList.toggle('active')"></div>
+        </div>
+        <div class="pulse-item">
+            <span>TargetHUD</span>
+            <div class="pulse-toggle" onclick="this.classList.toggle('active')"></div>
+        </div>
+        <div class="pulse-item">
+            <span>DamageNumbers</span>
+            <div class="pulse-toggle" onclick="this.classList.toggle('active')"></div>
+        </div>
+        <div class="pulse-item">
+            <span>RTX-Boost</span>
+            <div class="pulse-toggle" onclick="this.classList.toggle('active')"></div>
+        </div>
+        <p class="text-[8px] text-center text-gray-500 mt-6">Press Right Shift to Close</p>
     </div>
 
-    <nav class="flex justify-between items-center p-6 max-w-7xl mx-auto relative z-10">
-        <div class="text-2xl font-bold text-green-400">MC-RTX</div>
-        <div class="space-x-6 text-xs">
-            <a href="#" class="hover:text-green-400 transition">Главная</a>
-            <a href="#features" class="hover:text-green-400 transition">Функции</a>
-            <a href="#download" class="hover:text-green-400 transition">Скачать</a>
-            <a href="login.html" class="mc-button px-4 py-2 rounded text-white">Вход</a>
-        </div>
-    </nav>
-
-    <header class="relative h-screen flex items-center justify-center text-center px-4">
-        <div class="relative z-10 floating">
-            <h1 class="text-4xl md:text-6xl mb-6 leading-tight">
-                МЕЧТАЙ О <span class="text-green-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]">RTX</span> <br> ГРАФИКЕ?
-            </h1>
-            <p class="text-sm md:text-lg mb-10 text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                Погрузитесь в новый уровень визуального опыта. Бесплатный лаунчер с поддержкой <span class="text-green-400">Ray Tracing</span>, оптимизацией FPS и уникальным интерфейсом.
-            </p>
-            <div class="flex flex-col md:flex-row gap-6 justify-center">
-                <a href="#download" class="mc-button px-10 py-5 text-lg text-white rounded-sm hover:bg-green-600 transition-all duration-300">
-                    СКАЧАТЬ ЛАУНЧЕР
-                </a>
-                <a href="#features" class="px-10 py-5 text-lg text-gray-300 border-2 border-gray-600 rounded-sm hover:bg-white hover:text-black transition-all duration-300 backdrop-blur-sm">
-                    УЗНАТЬ БОЛЬШЕ
-                </a>
-            </div>
-        </div>
-        <div class="absolute bottom-0 left-0 w-full h-64 hero-gradient"></div>
-    </header>
-
-    <section id="features" class="py-32 max-w-7xl mx-auto px-6 relative z-10">
-        <h2 class="text-3xl text-center mb-20 drop-shadow-lg">ПОЧЕМУ ВЫБИРАЮТ НАС?</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div class="rtx-glow p-10 rounded-lg text-center">
-                <img src="https://cdn-icons-png.flaticon.com/512/6821/6821613.png" class="w-24 h-24 mx-auto mb-8 filter invert opacity-90" alt="RTX">
-                <h3 class="text-xl mb-6 text-green-400">RTX Визуалы</h3>
-                <p class="text-xs text-gray-300 leading-loose">Динамическое освещение, мягкие тени и реалистичные отражения в воде и металлах.</p>
-            </div>
-            <div class="rtx-glow p-10 rounded-lg text-center">
-                <img src="https://cdn-icons-png.flaticon.com/512/2586/2586488.png" class="w-24 h-24 mx-auto mb-8 filter invert opacity-90" alt="Speed">
-                <h3 class="text-xl mb-6 text-green-400">Ультра Оптимизация</h3>
-                <p class="text-xs text-gray-300 leading-loose">Собственный движок сжатия ресурсов, позволяющий играть с RTX даже на слабых сборках.</p>
-            </div>
-            <div class="rtx-glow p-10 rounded-lg text-center">
-                <img src="https://cdn-icons-png.flaticon.com/512/1161/1161388.png" class="w-24 h-24 mx-auto mb-8 filter invert opacity-90" alt="Security">
-                <h3 class="text-xl mb-6 text-green-400">Защита Аккаунтов</h3>
-                <p class="text-xs text-gray-300 leading-loose">Внутренняя система шифрования паролей и защиты от взлома ваших данных.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-20 bg-black/50 relative z-10">
-        <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-3xl text-center mb-16 text-green-500">КАК НАЧАТЬ ИГРАТЬ?</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <div class="p-6">
-                    <div class="text-4xl mb-4 text-green-500">1</div>
-                    <h3 class="text-sm mb-4">СКАЧАЙТЕ ЛАУНЧЕР</h3>
-                    <p class="text-[10px] text-gray-400">Нажмите кнопку скачивания и запустите установщик.</p>
-                </div>
-                <div class="p-6">
-                    <div class="text-4xl mb-4 text-green-500">2</div>
-                    <h3 class="text-sm mb-4">СОЗДАЙТЕ АККАУНТ</h3>
-                    <p class="text-[10px] text-gray-400">Зарегистрируйтесь в нашей внутренней системе за 10 секунд.</p>
-                </div>
-                <div class="p-6">
-                    <div class="text-4xl mb-4 text-green-500">3</div>
-                    <h3 class="text-sm mb-4">ВЫБЕРИТЕ ВЕРСИЮ</h3>
-                    <p class="text-[10px] text-gray-400">Выберите версию игры и наслаждайтесь RTX графикой!</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="download" class="py-32 max-w-5xl mx-auto px-6 relative z-10 text-center">
-        <div class="rtx-glow p-12 rounded-3xl bg-gradient-to-b from-zinc-900 to-black">
-            <h2 class="text-4xl mb-6 text-green-500">ГОТОВЫ К ПЕРЕМЕНАМ?</h2>
-            <p class="text-sm mb-10 text-gray-400 max-w-xl mx-auto">
-                Скачайте самый быстрый и красивый лаунчер для Minecraft с поддержкой RTX. Полностью бесплатно.
-            </p>
-            <a href="https://github.com/bromachok1589-beep/-mc-rtx-launcher/releases/download/v1.0.0/mc-rtx-launcher-1.0.0.Setup.exe" class="mc-button inline-block px-12 py-6 text-xl text-white rounded-sm hover:bg-green-600 transition-all">
-                СКАЧАТЬ .EXE ФАЙЛ
-            </a>
-            <p class="mt-6 text-[10px] text-gray-500">Поддерживается Windows 10/11 | 64-bit</p>
-        </div>
-    </section>
-
-    <section class="py-20 max-w-4xl mx-auto px-6 relative z-10">
-        <h2 class="text-3xl text-center mb-16">ЧАСТЫЕ ВОПРОСЫ</h2>
-        <div class="space-y-4">
-            <div class="faq-item">
-                <h3 class="text-xs mb-2 text-green-400">Нужна ли видеокарта RTX для работы?</h3>
-                <p class="text-[10px] text-gray-400">Нет, наш лаунчер использует оптимизированные шейдеры, которые имитируют RTX даже на обычных видеокартах.</p>
-            </div>
-            <div class="faq-item">
-                <h3 class="text-xs mb-2 text-green-400">Безопасно ли использовать лаунчер?</h3>
-                <p class="text-[10px] text-gray-400">Да, мы используем сквозное шифрование для ваших данных и не требуем прав администратора без необходимости.</p>
-            </div>
-            <div class="faq-item">
-                <h3 class="text-xs mb-2 text-green-400">Какие версии поддерживаются?</h3>
-                <p class="text-[10px] text-gray-400">На данный момент доступны 1.12.2, 1.16.5 и новейшая 1.21.1.</p>
-            </div>
-        </div>
-    </section>
-
-
     <script>
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
+        const { ipcRenderer } = require('electron');
 
-        function init() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            particles = [];
-            for(let i = 0; i < 100; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 3 + 1,
-                    speedX: Math.random() * 1 - 0.5,
-                    speedY: Math.random() * 1 - 0.5,
-                    color: `rgba(0, ${Math.random() * 255 + 100}, ${Math.random() * 155 + 100}, ${Math.random()})`
-                });
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.x += p.speedX;
-                p.y += p.speedY;
-                if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-                if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
-                ctx.fillStyle = p.color;
-                ctx.fillRect(p.x, p.y, p.size, p.size);
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+            
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+                if(item.innerText.toLowerCase().includes(pageId === 'main' ? 'главная' : pageId === 'settings' ? 'настройки' : pageId === 'pvp' ? 'pvp' : 'лаунчере')) {
+                    item.classList.add('active');
+                }
             });
-            requestAnimationFrame(animate);
         }
 
-        window.addEventListener('resize', init);
-        init();
-        animate();
+        document.getElementById('launch-btn').addEventListener('click', () => {
+            const version = document.getElementById('version').value;
+            const profile = document.getElementById('profile').value;
+            const username = 'Player'; // В идеале брать из login.html
+            const status = document.getElementById('status');
+            
+            status.innerText = `Загрузка версии ${version}...`;
+            status.classList.add('text-green-500');
+            
+            ipcRenderer.send('launch-game', { version, username, profile });
+        });
+
+        ipcRenderer.on('launch-progress', (event, data) => {
+            const container = document.getElementById('progress-container');
+            const bar = document.getElementById('progress-bar');
+            const text = document.getElementById('progress-text');
+            const percent = document.getElementById('progress-percent');
+
+            container.classList.remove('hidden');
+            bar.style.width = data.percent + '%';
+            percent.innerText = Math.round(data.percent) + '%';
+            text.innerText = data.message || 'Загрузка...';
+        });
+
+        ipcRenderer.on('launch-log', (event, line) => {
+            const consoleDiv = document.getElementById('console');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'mb-1';
+            logEntry.innerText = `[${new Date().toLocaleTimeString()}] ${line}`;
+            consoleDiv.appendChild(logEntry);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        });
+
+        ipcRenderer.on('launch-status', (event, message) => {
+
+            document.getElementById('status').innerText = message;
+        });
+
+        // Right Shift Toggle for Pulse Menu
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'ShiftRight') {
+                const menu = document.getElementById('pulse-menu');
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            }
+        });
     </script>
 </body>
 </html>
